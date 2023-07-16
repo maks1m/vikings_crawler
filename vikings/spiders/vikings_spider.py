@@ -6,7 +6,13 @@ from vikings.items import VikingsItem
 
 
 class VikingsSpider(scrapy.Spider):
+    """
+    Crawl me using:
+    scrapy crawl vikings -O log/vikings.json
+    """
+
     name = "vikings"
+    MOVIE_NAME = "Vikings"
 
     start_urls = [
         "https://www.history.com/shows/vikings/cast"
@@ -37,21 +43,20 @@ class VikingsSpider(scrapy.Spider):
             yield scrapy.Request(viking_page_url, callback=self.parse_hero, meta={"viking": viking_meta})
 
     def parse_hero(self, response):
-        actor_name = self.parse_actor_name(response)
-        description = self.parse_description(response)
+        actor_name = self._parse_actor_name(response)
+        description = self._parse_description(response)
 
         viking_meta = response.meta.get("viking")
-        d = {
+        d: dict = {
             "name": viking_meta["name"],
             "actor": actor_name,
             "desc": description,
             "image_urls": viking_meta["image_urls"],
         }
 
-        yield VikingsItem.from_dict(d)
+        yield VikingsItem.from_dict(self.MOVIE_NAME, d)
 
-    @staticmethod
-    def parse_description(response):
+    def _parse_description(self, response):
         desc_xpath_v1 = "/html/body/div[1]/div[2]/div/div/article/p[1]/text()"
         desc_xpath_v2 = "/html/body/div[1]/div[2]/div/div/article/div[1]/div/div/p/text()"
         description = response.xpath(desc_xpath_v1).get() \
@@ -59,8 +64,7 @@ class VikingsSpider(scrapy.Spider):
         description = description.strip() if description else ""
         return description
 
-    @staticmethod
-    def parse_actor_name(response):
+    def _parse_actor_name(self, response):
         xpath_ = "/html/body/div[1]/div[2]/div/div/article/header/h1/small/text()"
         actor_name = response.xpath(xpath_).get()
         actor_name = actor_name.strip() if actor_name else ""
