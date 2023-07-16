@@ -4,11 +4,13 @@ import scrapy
 
 import logging as log
 
+from twisted.internet.defer import DeferredList
+
 
 class VikingsSpider(scrapy.Spider):
     """
     Crawl me using:
-    scrapy crawl vikingage -O log/vikingage.json
+    scrapy crawl vikingage_2 -O log/vikingage_2.json
     """
     name = "vikingage_2"
 
@@ -24,60 +26,45 @@ class VikingsSpider(scrapy.Spider):
             viking_photos_url = self.parse_photos_url(row)
 
             if not viking_name:
-                log.error(f"Could not parse viking name for: {row}")
+                # due to DOM structure there are empty lines in table
                 continue
 
-            # yield {
-            #     "actor": actor_name,
-            #     "viking_name": viking_name,
-            #     "photos_url": viking_photos_url
-            # }
+            if not viking_photos_url:
+                log.error(
+                    f"Could not parse photos url for viking: {viking_name} in el: {row}")
+                continue
 
             viking_meta = {
                 "viking_name": viking_name,
                 "actor_name": actor_name,
-                "image_urls": []
             }
-
-            if not viking_photos_url:
-                log.error(f"Could not parse photos url for viking: {viking_name} in el: {row}")
-                continue
 
             viking_photos_url = response.urljoin(viking_photos_url)
-            r_meta = {
-                "viking": viking_meta
-            }
-            yield scrapy.Request(viking_photos_url, callback=self.parse_images, meta=r_meta)
+            yield scrapy.Request(viking_photos_url, callback=self.parse_images, meta={"viking": viking_meta})
 
     def parse_images(self, response):
-        for url in response.css("a.titlecharacters-image-grid__thumbnail-link::attr(href)").getall():
-            if url:
-                viking_meta = response.meta["viking"]
-                r_meta = {
-                    "viking": viking_meta
-                }
+        image_urls = response.css(
+            "a.titlecharacters-image-grid__thumbnail-link::attr(href)").getall()
+        
+        image_count = len(image_urls)
 
+        viking_meta: dict = response.meta["viking"]
+        viking_meta["image_count"] = image_count
+        viking_meta["image_urls"] = []
+        
+        for url in image_urls:
+            if url:
                 url = response.urljoin(url.strip())
-                yield scrapy.Request(url, callback=self.parse_image, meta=r_meta)
+                yield scrapy.Request(url, callback=self.parse_image, meta= {"viking": viking_meta})
 
     def parse_image(self, response):
-
         image_url = response.xpath(
             "/html/body/div[2]/main/div[2]/div[3]/div[5]/img/@src").get()
+        viking_meta: dict = response.meta["viking"]
+        viking_meta["image_urls"].append(image_url)
 
-        viking_meta = response.meta["viking"]
-
-        viking_name = viking_meta.get("viking_name")
-        actor_name = viking_meta.get("hero_name")
-        image_urls = viking_meta["image_urls"]
-        image_urls.append(image_url)
-
-        # yield viking_meta
-        yield {
-            "name": viking_name,
-            "actor": actor_name,
-            "image_urls": image_urls
-        }
+        if viking_meta["image_count"] == len(viking_meta["image_urls"]):
+            yield viking_meta
 
     @staticmethod
     def parse_viking_name(el) -> str:

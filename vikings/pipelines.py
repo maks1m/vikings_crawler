@@ -38,3 +38,11 @@ class EmptyDescriptionValuePipeline:
         else:
             log.error(f"Empty description for {adapter.get('name')}")
             raise DropItem(f"Viking description is absent {item}")
+
+class DropInconsistentImagesPipeline:
+
+    def process_item(self, item, spider):
+        if item["image_count"] != len(item["image_urls"]):
+            raise DropItem('skipping')
+        
+        return item

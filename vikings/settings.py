@@ -68,6 +68,7 @@ DOWNLOADER_MIDDLEWARES = {
 ITEM_PIPELINES = {
 #    "vikings.pipelines.DuplicatesPipeline": 100,
 #    "vikings.pipelines.EmptyDescriptionValuePipeline": 200,
+#    "vikings.pipelines.DropInconsistentImagesPipeline": 200
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
