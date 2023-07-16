@@ -3,9 +3,9 @@ import scrapy
 
 
 class VikingsItem(scrapy.Item):
-    name: str = scrapy.Field(serializer=str)
-    actor: str = scrapy.Field(serializer=str)
-    desc: str = scrapy.Field(serializer=str)
+    name: str = scrapy.Field()
+    actor: str = scrapy.Field()
+    desc: str = scrapy.Field()
     image_urls: List[str] = scrapy.Field()
 
     @staticmethod
