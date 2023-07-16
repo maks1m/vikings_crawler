@@ -12,7 +12,7 @@ class VikingsSpider(scrapy.Spider):
     Crawl me using:
     scrapy crawl vikingage_2 -O log/vikingage_2.json
     """
-    name = "vikingage_2"
+    name = "vikingage"
 
     start_urls = [
         "https://www.imdb.com/title/tt5905354/fullcredits"
