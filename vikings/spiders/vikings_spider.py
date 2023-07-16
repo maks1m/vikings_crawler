@@ -2,7 +2,7 @@ import logging as log
 
 import scrapy
 
-from vikings.items import VikingsItem
+from vikings.items import VikingItem
 
 
 class VikingsSpider(scrapy.Spider):
@@ -54,7 +54,7 @@ class VikingsSpider(scrapy.Spider):
             "image_urls": viking_meta["image_urls"],
         }
 
-        yield VikingsItem.from_dict(self.MOVIE_NAME, d)
+        yield VikingItem.from_dict(self.MOVIE_NAME, d)
 
     def _parse_description(self, response):
         desc_xpath_v1 = "/html/body/div[1]/div[2]/div/div/article/p[1]/text()"

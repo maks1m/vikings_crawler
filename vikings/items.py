@@ -2,7 +2,7 @@ from typing import List
 import scrapy
 
 
-class VikingsItem(scrapy.Item):
+class VikingItem(scrapy.Item):
     name: str = scrapy.Field()
     movie_name: str = scrapy.Field()
     actor: str = scrapy.Field()
@@ -10,8 +10,8 @@ class VikingsItem(scrapy.Item):
     image_urls: List[str] = scrapy.Field()
 
     @staticmethod
-    def from_dict(movie_name: str, d: dict) -> 'VikingsItem':
-        hero = VikingsItem()
+    def from_dict(movie_name: str, d: dict) -> 'VikingItem':
+        hero = VikingItem()
         hero["name"] = d.get("name")
         hero["movie_name"] = movie_name
         hero["actor"] = d.get("actor")

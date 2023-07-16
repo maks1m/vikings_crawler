@@ -6,7 +6,7 @@ import logging as log
 
 from twisted.internet.defer import DeferredList
 
-from vikings.items import VikingsItem
+from vikings.items import VikingItem
 
 
 class VikingsSpider(scrapy.Spider):
@@ -72,7 +72,7 @@ class VikingsSpider(scrapy.Spider):
                 "actor": viking_meta["actor_name"],
                 "image_urls": viking_meta["image_urls"],
             }
-            yield VikingsItem.from_dict(self.MOVIE_NAME, d)
+            yield VikingItem.from_dict(self.MOVIE_NAME, d)
 
     def _parse_viking_name(self, el) -> str:
         name = el.css("td:nth-child(4) > a:nth-child(1)::text").get()
