@@ -69,6 +69,7 @@ ITEM_PIPELINES = {
 #    "vikings.pipelines.DuplicatesPipeline": 100,
 #    "vikings.pipelines.EmptyDescriptionValuePipeline": 200,
 #    "vikings.pipelines.DropInconsistentImagesPipeline": 200
+    "vikings.pipelines.SavingToPostgresPipeline": 500
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
