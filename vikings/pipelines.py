@@ -88,7 +88,7 @@ class SavingToPostgresPipeline:
 
     def store_vikings(self, item) -> int:
         insert_query = """
-            INSERT INTO vikings.vikings ("name")
+            INSERT INTO vikings ("name")
             VALUES (%s)
             ON CONFLICT ("name") DO NOTHING
             RETURNING "id";
@@ -105,7 +105,7 @@ class SavingToPostgresPipeline:
         if not result:
             select_query = """
                 select id
-                from vikings.vikings
+                from vikings
                 where name = (%s);
             """
 
@@ -129,7 +129,7 @@ class SavingToPostgresPipeline:
         }
 
         query = f"""
-            INSERT INTO vikings.viking_movies ("viking_id", "name", "actor_name", "description")
+            INSERT INTO viking_movies ("viking_id", "name", "actor_name", "description")
             VALUES (%(viking_id)s, %(movie_name)s, %(actor)s, %(desc)s)
             ON CONFLICT ("viking_id") DO NOTHING
             RETURNING "id";
@@ -145,7 +145,7 @@ class SavingToPostgresPipeline:
     def store_images(self, item, viking_id, movie_id):
         for image in item["image_urls"]:
             query = f"""
-                INSERT INTO vikings.viking_images ("viking_id", "movie_id", "image_url")
+                INSERT INTO viking_images ("viking_id", "movie_id", "image_url")
                 VALUES (%s, %s, %s);
             """
             self.curr.execute(query, (viking_id, movie_id, image))
@@ -160,10 +160,10 @@ class SavingToPostgresPipeline:
         self.curr.execute(query, (condition_value,))
 
     def delete_viking_images(self, viking_id):
-        self.delete_records('vikings.viking_images', 'viking_id', viking_id)
+        self.delete_records('viking_images', 'viking_id', viking_id)
 
     def delete_viking_movies(self, viking_id):
-        self.delete_records('vikings.viking_movies', 'viking_id', viking_id)
+        self.delete_records('viking_movies', 'viking_id', viking_id)
 
     def close_spider(self, spider):
         self.curr.close()

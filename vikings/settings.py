@@ -54,7 +54,7 @@ COOKIES_ENABLED = False
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
 #    "vikings.middlewares.VikingsDownloaderMiddleware": 543,
-    "vikings.middlewares.CustomProxyMiddleware": 300,
+#     "vikings.middlewares.CustomProxyMiddleware": 300,
 }
 
 # Enable or disable extensions

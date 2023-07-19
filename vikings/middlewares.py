@@ -113,8 +113,3 @@ class CustomProxyMiddleware:
 
     def get_proxy(self):
         return self.proxy
-
-
-def m():
-    s: str = ""
-    s.find()
