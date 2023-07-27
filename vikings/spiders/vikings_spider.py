@@ -40,7 +40,11 @@ class VikingsSpider(scrapy.Spider):
                 "image_urls": [viking_image_url]
             }
             viking_page_url = response.urljoin(viking_page_url)
-            yield scrapy.Request(viking_page_url, callback=self.parse_hero, meta={"viking": viking_meta})
+            yield scrapy.Request(
+                viking_page_url,
+                callback=self.parse_hero,
+                meta={"viking": viking_meta, 'dont_redirect': True}
+            )
 
     def parse_hero(self, response):
         actor_name = self._parse_actor_name(response)
